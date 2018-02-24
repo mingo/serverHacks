@@ -10,8 +10,9 @@ public class LocalPlayer : NetworkBehaviour {
 
 
 	//[SyncVar (hook = "CmdChangeName")]public string pname = "player" + nid;
+	[SyncVar] public string pname;
 
-	/*void OnGUI() {
+	void OnGUI() {
 		if (isLocalPlayer) {
 			pname = GUI.TextField (new Rect (10, Screen.height - 40, 40, 50), pname);
 			if (GUI.Button (new Rect (60, Screen.height - 40, Screen.height - 40, 50), "Change")) { 
@@ -20,15 +21,14 @@ public class LocalPlayer : NetworkBehaviour {
 		}
 	}
 
-	public void CmdChangeName(string newName){
-		pname = newName;
-	}*/
-
-	[SyncVar] public string pname;
+	[Command] public void CmdChangeName(string newName){
+		this.pname = newName;
+	}
 
 	// Use this for initialization
 	void Start () {
-		
+		this.pname = "Player " + netId.ToString();
+
 		if (isLocalPlayer) {
 			GetComponent<Movement>().enabled = true;
 
@@ -37,7 +37,7 @@ public class LocalPlayer : NetworkBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		this.pname = "Player " + netId.ToString();
+		
 		this.GetComponentInChildren<TextMesh> ().text = pname;
 		/*if (isLocalPlayer) {
 			this.GetComponentInChildren<TextMesh> ().text = pname;
