@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 114525748937474786}
   - component: {fileID: 102858651093255464}
   m_Layer: 0
-  m_Name: New Text
+  m_Name: Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -164,7 +164,7 @@ TextMesh:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1744091908705794}
-  m_Text: Hello World
+  m_Text: Player
   m_OffsetZ: 0
   m_CharacterSize: 1
   m_LineSpacing: 1
@@ -244,7 +244,7 @@ MonoBehaviour:
   m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TransformSyncMode: 2
+  m_TransformSyncMode: 1
   m_SendInterval: 0.1
   m_SyncRotationAxis: 3
   m_RotationSyncCompression: 0
