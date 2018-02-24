@@ -189,7 +189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b7dfc10ca3fe420ba83206ca464e671, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  speed: 3
 --- !u!114 &114237691565479802
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -267,10 +267,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pname: player
   tagged: 0
-  startTime: -1
-  tagSet: 0
   canBeTagged: 1
   lastTagged: 0
+  startTime: -1
+  tagSet: 0
 --- !u!212 &212089283459241330
 SpriteRenderer:
   m_ObjectHideFlags: 1
