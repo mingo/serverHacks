@@ -818,6 +818,48 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: fb1cabf87dc9347b294f0350fac1e054, type: 2}
   m_IsPrefabParent: 0
+--- !u!1001 &668068237
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4761356858225320, guid: 23a1ceca06f2d4903835b8696e6d2705, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -4.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4761356858225320, guid: 23a1ceca06f2d4903835b8696e6d2705, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 4.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 4761356858225320, guid: 23a1ceca06f2d4903835b8696e6d2705, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -0.046875
+      objectReference: {fileID: 0}
+    - target: {fileID: 4761356858225320, guid: 23a1ceca06f2d4903835b8696e6d2705, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4761356858225320, guid: 23a1ceca06f2d4903835b8696e6d2705, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4761356858225320, guid: 23a1ceca06f2d4903835b8696e6d2705, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4761356858225320, guid: 23a1ceca06f2d4903835b8696e6d2705, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4761356858225320, guid: 23a1ceca06f2d4903835b8696e6d2705, type: 2}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 23a1ceca06f2d4903835b8696e6d2705, type: 2}
+  m_IsPrefabParent: 0
 --- !u!4 &669268044 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4916229472228088, guid: fb1cabf87dc9347b294f0350fac1e054,
