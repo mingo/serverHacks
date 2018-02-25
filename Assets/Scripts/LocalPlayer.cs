@@ -108,9 +108,10 @@ public class LocalPlayer : NetworkBehaviour {
 				this.CmdCanBeTagged();
             }
         }
-		bool check1 = false;
-		bool check2 = true;
 		GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+		/*bool check1 = false;
+		bool check2 = true;
+
 		for (int i = 0; i < players.Length; i++) {
 			if (players [i].GetComponent<LocalPlayer> ().tagged) {
 				check1 = true;
@@ -118,16 +119,23 @@ public class LocalPlayer : NetworkBehaviour {
 				check2 = false;
 			}
 		}
-
+		//if both are not tag, set player 1 to tag
 		if (this.netId.ToString () == "1") {
 			if (check1 == false) {
 				this.CmdChangeTag1 (true);
 			}
 		}
+		//if both are tag, player 2 is not tag
 		if (this.netId.ToString () == "2") {
 			if (check2 == true) {
 				this.CmdChangeTag1 (false);
 			}
+		}*/
+
+		if (players [0].GetComponent<LocalPlayer> ().tagged) {
+			players [1].GetComponent<LocalPlayer> ().CmdChangeTag1 (false);
+		} else {
+			players [1].GetComponent<LocalPlayer> ().CmdChangeTag1 (true);
 		}
 
 	}
@@ -147,7 +155,7 @@ public class LocalPlayer : NetworkBehaviour {
 				this.CmdChangeTag1 (lp.tagged);
 			}*/
 
-			if (lp.netId.ToString () == "1") {
+			if (lp.netId.ToString () == "1" && this.canBeTagged && lp.canBeTagged) {
 				this.CmdCanBeTagged();
 				this.CmdChangeTag1 (lp.tagged);
 			}
