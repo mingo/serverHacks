@@ -19,7 +19,7 @@ public class LocalPlayer : NetworkBehaviour {
 
     [SyncVar] public float lastTagged;
     [SyncVar] public float whenTagged;
-    [SyncVar] public float timeTagged = 0;
+    public float timeTagged = 0;
 
     [SyncVar] public bool lostGame = false;
 	[SyncVar] public bool gameEnd = false;
@@ -48,7 +48,7 @@ public class LocalPlayer : NetworkBehaviour {
 		this.plost = newLost;
 	}
 
-	[Server] public void CmdChangeTag() {
+	public void CmdChangeTag() {
 		this.tagged = !this.tagged;
         if (this.tagged) {
             whenTagged = Time.timeSinceLevelLoad;
