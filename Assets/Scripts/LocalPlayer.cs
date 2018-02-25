@@ -64,6 +64,9 @@ public class LocalPlayer : NetworkBehaviour {
         this.lastTagged= time;
     }
 
+	[Command] public void CmdLostGame(bool value) {
+		lostGame = value;
+	}
 	// Use this for initialization
 	void Start () {
 		this.pname = "Player " + netId.ToString();
@@ -81,6 +84,7 @@ public class LocalPlayer : NetworkBehaviour {
         
 		if (lostGame) {
 			CmdGameEnd ("Player: " + pname + " Lost!");
+			Debug.Log ("passed");
 		}
 
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
@@ -103,8 +107,8 @@ public class LocalPlayer : NetworkBehaviour {
         if (isLocalPlayer && tagged) {
             timeTagged += Time.deltaTime;
             Debug.Log(pname + ": " + timeTagged.ToString());
-            if (timeTagged > 30.0f) {
-                lostGame = true;
+            if (timeTagged > 10.0f) {
+				CmdLostGame(true);
             }
 		}
 
