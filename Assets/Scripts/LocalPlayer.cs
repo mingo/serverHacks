@@ -12,6 +12,7 @@ public class LocalPlayer : NetworkBehaviour {
 
 	//[SyncVar (hook = "CmdChangeName")]public string pname = "player" + nid;
 	[SyncVar] public string pname;
+	[SyncVar] public string plost;
 
     [SyncVar] public bool tagged = false;
     [SyncVar] public bool canBeTagged = true;
@@ -21,6 +22,7 @@ public class LocalPlayer : NetworkBehaviour {
     [SyncVar] public float timeTagged = 0;
 
     [SyncVar] public bool lostGame = false;
+	[SyncVar] public bool gameEnd = false;
 
     public float startTime = -1.0f;
     public bool tagSet = false;
@@ -40,6 +42,10 @@ public class LocalPlayer : NetworkBehaviour {
 
 	[Command] public void CmdChangeName(string newName) {
 		this.pname = newName;
+	}
+
+	[Command] public void CmdGameEnd(string newLost) {
+		this.plost = newLost;
 	}
 
 	[Server] public void CmdChangeTag() {
@@ -71,9 +77,11 @@ public class LocalPlayer : NetworkBehaviour {
 	void Update () {
 		
 		this.GetComponentInChildren<TextMesh> ().text = pname;
-        if (lostGame) {
-            loserText.text = "Player: " + pname + "Lost!";
-        }
+		loserText.text = plost;
+        
+		if (lostGame) {
+			CmdGameEnd ("Player: " + pname + " Lost!");
+		}
 
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 
@@ -98,7 +106,7 @@ public class LocalPlayer : NetworkBehaviour {
             if (timeTagged > 30.0f) {
                 lostGame = true;
             }
-        }
+		}
 
         if (this.tagged) {
             this.GetComponent<SpriteRenderer>().color = Color.green;
