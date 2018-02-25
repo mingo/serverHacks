@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Networking;
 
 
@@ -11,13 +12,22 @@ public class LocalPlayer : NetworkBehaviour {
 
 	//[SyncVar (hook = "CmdChangeName")]public string pname = "player" + nid;
 	[SyncVar] public string pname;
+
     [SyncVar] public bool tagged = false;
     [SyncVar] public bool canBeTagged = true;
+
     [SyncVar] public float lastTagged;
+    [SyncVar] public float whenTagged;
+    [SyncVar] public float timeTagged = 0;
+
+    [SyncVar] public bool lostGame = false;
 
     public float startTime = -1.0f;
     public bool tagSet = false;
 
+    public Text loserText;
+
+    private System.Object aLock = new System.Object();
 
 	void OnGUI() {
 		if (isLocalPlayer) {
@@ -28,45 +38,32 @@ public class LocalPlayer : NetworkBehaviour {
 		}
 	}
 
-	[Command] public void CmdChangeName(string newName){
+	[Command] public void CmdChangeName(string newName) {
 		this.pname = newName;
 	}
 
-	[Command] public void CmdChangeTag1(bool value) {
-		this.tagged = value;
-		Debug.Log (pname + tagged.ToString());
-    }
-
-	[Command] public void CmdCanBeTagged1(bool value)
-    {
-		this.canBeTagged = value;
-
-    }
-	[Command] public void CmdChangeTag() {
+	[Server] public void CmdChangeTag() {
 		this.tagged = !this.tagged;
-		Debug.Log (pname + tagged.ToString());
+        if (this.tagged) {
+            whenTagged = Time.timeSinceLevelLoad;
+        }
 	}
 
-	[Command] public void CmdCanBeTagged()
-	{
+	[Server] public void CmdCanBeTagged() {
 		this.canBeTagged = !this.canBeTagged;
 
 	}
 
-
-    [Command] public void CmdTimeTag(float time)
-    {
+    [Server] public void CmdTimeTag(float time) {
         this.lastTagged= time;
     }
 
 	// Use this for initialization
 	void Start () {
 		this.pname = "Player " + netId.ToString();
+        this.loserText = GameObject.FindGameObjectWithTag("LoserText").GetComponent<Text>();
 		if (isLocalPlayer) {
 			GetComponent<Movement>().enabled = true;
-		}
-		if (this.netId.ToString () == "1") {
-			this.CmdChangeTag();
 		}
 	}
 
@@ -74,120 +71,70 @@ public class LocalPlayer : NetworkBehaviour {
 	void Update () {
 		
 		this.GetComponentInChildren<TextMesh> ().text = pname;
+        if (lostGame) {
+            loserText.text = "Player: " + pname + "Lost!";
+        }
 
-        /*if (isLocalPlayer) {
-			this.GetComponentInChildren<TextMesh> ().text = pname;
-		}*/
-		/*GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
         if (netId.ToString() == "1" && players.Length > 1 && !tagSet) {
-            if (startTime > 0 && Time.timeSinceLevelLoad - startTime > 5 && !tagSet) {
-                GameObject player = players[Random.Range(0, players.Length)];
-                player.GetComponent<LocalPlayer>().CmdChangeTag(true);
-                tagSet = true;
-                Debug.Log("chose");
-            } else if (startTime < 0) {
-                startTime = Time.timeSinceLevelLoad;
+            lock (aLock) {
+                if (startTime > 0 && Time.timeSinceLevelLoad - startTime > 10 && !tagSet) {
+                    GameObject player = players[Random.Range(0, players.Length)];
+                    player.GetComponent<LocalPlayer>().CmdChangeTag();
+                    tagSet = true;
+                }
+                else if (startTime < 0) {
+                    startTime = Time.timeSinceLevelLoad;
+                }
             }
         } else {
             startTime = -1.0f;
-        }*/
-		
+        }
 
-        if (this.tagged)
-        {
+        if (isLocalPlayer && tagged) {
+            timeTagged += Time.deltaTime;
+            Debug.Log(pname + ": " + timeTagged.ToString());
+            if (timeTagged > 30.0f) {
+                lostGame = true;
+            }
+        }
+
+        if (this.tagged) {
             this.GetComponent<SpriteRenderer>().color = Color.green;
-			this.GetComponent<Movement> ().speed = 6;
+            this.GetComponent<Movement>().speed = 6;
+        }
+        else if (!this.canBeTagged) {
+            this.GetComponent<SpriteRenderer>().color = Color.yellow;
+            this.GetComponent<Movement>().speed = 3;
         } else {
             this.GetComponent<SpriteRenderer>().color = Color.white;
-			this.GetComponent<Movement> ().speed = 3;
+            this.GetComponent<Movement>().speed = 3;
         }
 
         if (!this.canBeTagged) {
-            if (lastTagged + 5 < Time.timeSinceLevelLoad)
-            {
+            if (lastTagged + 3 < Time.timeSinceLevelLoad) {
 				this.CmdCanBeTagged();
             }
         }
-		GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-		/*bool check1 = false;
-		bool check2 = true;
 
-		for (int i = 0; i < players.Length; i++) {
-			if (players [i].GetComponent<LocalPlayer> ().tagged) {
-				check1 = true;
-			} else {
-				check2 = false;
-			}
-		}
-		//if both are not tag, set player 1 to tag
-		if (this.netId.ToString () == "1") {
-			if (check1 == false) {
-				this.CmdChangeTag1 (true);
-			}
-		}
-		//if both are tag, player 2 is not tag
-		if (this.netId.ToString () == "2") {
-			if (check2 == true) {
-				this.CmdChangeTag1 (false);
-			}
-		}*/
-
-		if (players [0].GetComponent<LocalPlayer> ().tagged) {
-			players [1].GetComponent<LocalPlayer> ().CmdChangeTag1 (false);
-		} else {
-			players [1].GetComponent<LocalPlayer> ().CmdChangeTag1 (true);
-		}
-
-	}
+    }
 
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    [Server] private void OnCollisionEnter2D(Collision2D collision)
     {
         GameObject go = collision.gameObject;
         if (go.tag == "Player") {
             LocalPlayer lp = go.GetComponent<LocalPlayer>();
 
-			/*if (this.netId.ToString () == "1" && lp.tagged && this.canBeTagged) {
-				this.CmdCanBeTagged ();
-				this.CmdChangeTag ();
-			} else if (this.canBeTagged) {
-				this.CmdCanBeTagged ();
-				this.CmdChangeTag1 (lp.tagged);
-			}*/
+            if (this.tagged && lp.canBeTagged) {
+                this.CmdCanBeTagged();
+                this.CmdChangeTag();
+                lp.GetComponent<LocalPlayer>().CmdCanBeTagged();
+                lp.GetComponent<LocalPlayer>().CmdChangeTag();
+                this.CmdTimeTag(Time.timeSinceLevelLoad);
+            }
 
-			if (lp.netId.ToString () == "1" && this.canBeTagged && lp.canBeTagged) {
-				this.CmdCanBeTagged();
-				this.CmdChangeTag1 (lp.tagged);
-			}
-			else{
-				this.CmdCanBeTagged();
-				this.CmdChangeTag();
-			}
-
-			
-	
-
-			/*if (lp.tagged && this.canBeTagged) { //if other player is tag and this player can be tagged
-				Debug.Log ("Collision");
-				this.CmdChangeTag (true); //this player is tag
-
-				//this.canBeTagged = false;
-				//Debug.Log (tagged);
-
-			} 
-			else if (this.tagged && lp.canBeTagged) {
-				this.CmdChangeTag (false);
-				this.CmdCanBeTagged(false);
-				this.CmdTimeTag(Time.timeSinceLevelLoad);
-				//this.lastTagged = Time.timeSinceLevelLoad; //time
-				//this.canBeTagged = false; //other player cant be tagged
-				//this.CmdChangeTag(false); //otherplayer is not tag
-				//lp.CmdChangeTag(true);
-				//lp.canBeTagged = false;
-			}
-			else {
-				Debug.Log(pname);
-            }*/        
         }
 
     }
