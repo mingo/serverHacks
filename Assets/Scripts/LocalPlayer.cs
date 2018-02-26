@@ -48,7 +48,7 @@ public class LocalPlayer : NetworkBehaviour {
 		this.plost = newLost;
 	}
 
-	public void CmdChangeTag() {
+	[Server] public void CmdChangeTag() {
 		this.tagged = !this.tagged;
         if (this.tagged) {
             whenTagged = Time.timeSinceLevelLoad;
@@ -80,18 +80,18 @@ public class LocalPlayer : NetworkBehaviour {
 	void Update () {
 		
 		this.GetComponentInChildren<TextMesh> ().text = pname;
-		loserText.text = plost;
+		/*loserText.text = plost;
         
 		if (lostGame) {
 			CmdGameEnd ("Player: " + pname + " Lost!");
 			Debug.Log ("passed");
-		}
+		}*/
 
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 
         if (netId.ToString() == "1" && players.Length > 1 && !tagSet) {
             lock (aLock) {
-                if (startTime > 0 && Time.timeSinceLevelLoad - startTime > 10 && !tagSet) {
+                if (startTime > 0 && Time.timeSinceLevelLoad - startTime > 5 && !tagSet) {
                     GameObject player = players[Random.Range(0, players.Length)];
                     player.GetComponent<LocalPlayer>().CmdChangeTag();
                     tagSet = true;
